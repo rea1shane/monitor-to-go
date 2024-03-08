@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss:${GRAFANA_VERSION}
+    command:
+      - "--config=/etc/grafana/grafana.ini"
+    volumes:
+      - ./sample.ini:/etc/grafana/grafana.ini
+    ports:
+      - 3000:3000
+    restart: unless-stopped
