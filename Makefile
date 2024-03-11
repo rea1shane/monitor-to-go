@@ -1,4 +1,4 @@
-.PHONY: echo-vars pull-images save-images pull-configs
+.PHONY: echo-vars pull-images save-images pull-resources pull-configs pull-dashboards
 
 PLATFORM = amd64
 
@@ -23,6 +23,14 @@ save-images: pull-images
 		grafana/grafana-oss:$(GRAFANA_VERSION) \
 		prom/node-exporter:$(NODE_EXPORTER_VERSION)
 
+pull-resources: pull-configs pull-dashboards
+
 pull-configs: echo-vars
 	wget https://raw.githubusercontent.com/prometheus/prometheus/$(PROMETHEUS_VERSION)/documentation/examples/prometheus.yml -O prometheus/prometheus.yml
 	wget https://raw.githubusercontent.com/grafana/grafana/v$(GRAFANA_VERSION)/conf/sample.ini -O grafana/sample.ini
+
+pull-dashboards:
+	mkdir -p dashboards
+	wget https://grafana.com/api/dashboards/3662/revisions/2/download -O dashboards/prometheus.json
+	wget https://grafana.com/api/dashboards/3590/revisions/3/download -O dashboards/grafana.json
+	wget https://grafana.com/api/dashboards/1860/revisions/36/download -O dashboards/node-exporter.json

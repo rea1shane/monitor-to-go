@@ -1,3 +1,4 @@
 prometheus.yml
 sample.ini
 *.tar
+dashboards
