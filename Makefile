@@ -3,14 +3,22 @@
 PLATFORM = amd64
 
 PROMETHEUS_VERSION = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS_VERSION=[^ ]+' | cut -d= -f2)
+PROMETHEUS_PORT = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS_PORT=[^ ]+' | cut -d= -f2)
+
 GRAFANA_VERSION = $(shell cat grafana/.env | grep -oE 'GRAFANA_VERSION=[^ ]+' | cut -d= -f2)
+GRAFANA_PORT = $(shell cat grafana/.env | grep -oE 'GRAFANA_PORT=[^ ]+' | cut -d= -f2)
+
 NODE_EXPORTER_VERSION = $(shell cat node-exporter/.env | grep -oE 'NODE_EXPORTER_VERSION=[^ ]+' | cut -d= -f2)
+NODE_EXPORTER_PORT = $(shell cat node-exporter/.env | grep -oE 'NODE_EXPORTER_PORT=[^ ]+' | cut -d= -f2)
 
 echo-vars:
 	@echo Platform:              $(PLATFORM)
 	@echo Prometheus version:    $(PROMETHEUS_VERSION)
+	@echo Prometheus port:       $(PROMETHEUS_PORT)
 	@echo Grafana version:       $(GRAFANA_VERSION)
+	@echo Grafana port:          $(GRAFANA_PORT)
 	@echo Node exporter version: $(NODE_EXPORTER_VERSION)
+	@echo Node exporter port:    $(NODE_EXPORTER_PORT)
 
 pull-images: echo-vars
 	docker pull --platform $(PLATFORM) prom/prometheus:$(PROMETHEUS_VERSION)

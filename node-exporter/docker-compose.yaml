@@ -6,6 +6,7 @@ services:
     image: prom/node-exporter:${NODE_EXPORTER_VERSION}
     command:
       - "--path.rootfs=/host"
+      - "--web.listen-address=:${NODE_EXPORTER_PORT}"
     network_mode: host
     pid: host
     volumes:

@@ -9,5 +9,5 @@ services:
     volumes:
       - ./sample.ini:/etc/grafana/grafana.ini
     ports:
-      - 3000:3000
+      - ${GRAFANA_PORT}:3000
     restart: unless-stopped
