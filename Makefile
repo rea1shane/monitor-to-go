@@ -1,4 +1,4 @@
-.PHONY: echo-vars pull-images save-images pull-resources pull-configs pull-dashboards pull-rules
+.PHONY: echo-vars pull-images save-images pull-resources pull-configs pull-dashboards pull-rules package clean
 
 PLATFORM = amd64
 
@@ -47,3 +47,11 @@ pull-rules:
 	mkdir -p rules
 	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/prometheus.yml -O rules/prometheus.yml
 	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/node.yml -O rules/node.yml
+
+package: pull-images save-images pull-resources clean
+	mkdir -p monitor
+	rsync -av --exclude='.git*' --exclude='Makefile' --exclude='monitor' . monitor
+	zip -r monitor.zip monitor
+
+clean:
+	rm -rf monitor*
