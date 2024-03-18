@@ -1,4 +1,4 @@
-.PHONY: echo-vars pull-images save-images pull-resources pull-configs pull-dashboards pull-rules package clean
+.PHONY: echo-vars pull-images save-images pull-resources pull-configs pull-dashboards pull-rules package clean clean-all
 
 PLATFORM = amd64
 
@@ -26,32 +26,42 @@ pull-images: echo-vars
 	docker pull --platform $(PLATFORM) prom/node-exporter:$(NODE_EXPORTER_VERSION)
 
 save-images: pull-images
-	docker save -o images-$(PLATFORM)+prometheus:$(PROMETHEUS_VERSION)+grafana-oss:$(GRAFANA_VERSION)+node-exporter:$(NODE_EXPORTER_VERSION).tar \
-		prom/prometheus:$(PROMETHEUS_VERSION) \
-		grafana/grafana-oss:$(GRAFANA_VERSION) \
-		prom/node-exporter:$(NODE_EXPORTER_VERSION)
+	mkdir -p prometheus/resources/images
+	docker save -o prometheus/resources/images/prometheus-$(PROMETHEUS_VERSION)-$(PLATFORM).tar prom/prometheus:$(PROMETHEUS_VERSION)
+
+	mkdir -p grafana/resources/images
+	docker save -o grafana/resources/images/grafana-$(GRAFANA_VERSION)-$(PLATFORM).tar grafana/grafana-oss:$(GRAFANA_VERSION)
+
+	mkdir -p node-exporter/resources/images
+	docker save -o node-exporter/resources/images/node-exporter-$(NODE_EXPORTER_VERSION)-$(PLATFORM).tar prom/node-exporter:$(NODE_EXPORTER_VERSION)
 
 pull-resources: pull-configs pull-dashboards pull-rules
 
 pull-configs: echo-vars
-	wget https://raw.githubusercontent.com/prometheus/prometheus/$(PROMETHEUS_VERSION)/documentation/examples/prometheus.yml -O prometheus/prometheus.yml
-	wget https://raw.githubusercontent.com/grafana/grafana/v$(GRAFANA_VERSION)/conf/sample.ini -O grafana/sample.ini
+	mkdir -p prometheus/resources/configs
+	wget https://raw.githubusercontent.com/prometheus/prometheus/$(PROMETHEUS_VERSION)/documentation/examples/prometheus.yml -O prometheus/resources/configs/prometheus.yml
+
+	mkdir -p grafana/resources/configs
+	wget https://raw.githubusercontent.com/grafana/grafana/v$(GRAFANA_VERSION)/conf/sample.ini -O grafana/resources/configs/sample.ini
 
 pull-dashboards:
-	mkdir -p dashboards
-	wget https://grafana.com/api/dashboards/3662/revisions/2/download -O dashboards/prometheus.json
-	wget https://grafana.com/api/dashboards/3590/revisions/3/download -O dashboards/grafana.json
-	wget https://grafana.com/api/dashboards/1860/revisions/36/download -O dashboards/node-exporter.json
+	mkdir -p grafana/resources/dashboards
+	wget https://grafana.com/api/dashboards/3662/revisions/2/download -O grafana/resources/dashboards/prometheus.json
+	wget https://grafana.com/api/dashboards/3590/revisions/3/download -O grafana/resources/dashboards/grafana.json
+	wget https://grafana.com/api/dashboards/1860/revisions/36/download -O grafana/resources/dashboards/node-exporter.json
 
 pull-rules:
-	mkdir -p rules
-	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/prometheus.yml -O rules/prometheus.yml
-	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/node.yml -O rules/node.yml
+	mkdir -p prometheus/resources/rules
+	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/prometheus.yml -O prometheus/resources/rules/prometheus.yml
+	wget https://raw.githubusercontent.com/rea1shane/monitor/main/rules/node.yml -O prometheus/resources/rules/node.yml
 
-package: pull-images save-images pull-resources clean
+package: save-images pull-resources clean
 	mkdir -p monitor
 	rsync -av --exclude='.git*' --exclude='Makefile' --exclude='monitor' . monitor
 	zip -r monitor.zip monitor
 
 clean:
 	rm -rf monitor*
+
+clean-all: clean
+	rm -rf */resources

@@ -1,7 +1,4 @@
-prometheus.yml
-sample.ini
 *.tar
 *.zip
-dashboards
-rules
 monitor
+resources
