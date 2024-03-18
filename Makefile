@@ -57,7 +57,7 @@ pull-rules:
 
 package: clean save-images pull-resources
 	mkdir -p monitor
-	rsync -av --exclude='.git*' --exclude='Makefile' --exclude='monitor' . monitor
+	rsync -av --exclude='.git*' --exclude='Makefile' --exclude='monitor' --exclude='.DS_Store' . monitor
 	zip -r monitor.zip monitor
 
 clean:
