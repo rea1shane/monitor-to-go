@@ -7,7 +7,7 @@ services:
     command:
       - "--config=/etc/grafana/grafana.ini"
     volumes:
-      - ./sample.ini:/etc/grafana/grafana.ini
+      - ./resources/configs/sample.ini:/etc/grafana/grafana.ini
     ports:
       - ${GRAFANA_PORT}:3000
     restart: unless-stopped
