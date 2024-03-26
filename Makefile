@@ -8,8 +8,8 @@ PROMETHEUS_PORT = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS_PORT=[^ ]+'
 GRAFANA_VERSION = $(shell cat grafana/.env | grep -oE 'GRAFANA_VERSION=[^ ]+' | cut -d= -f2)
 GRAFANA_PORT = $(shell cat grafana/.env | grep -oE 'GRAFANA_PORT=[^ ]+' | cut -d= -f2)
 
-NODE_EXPORTER_VERSION = $(shell cat node-exporter/.env | grep -oE 'NODE_EXPORTER_VERSION=[^ ]+' | cut -d= -f2)
-NODE_EXPORTER_PORT = $(shell cat node-exporter/.env | grep -oE 'NODE_EXPORTER_PORT=[^ ]+' | cut -d= -f2)
+NODE_EXPORTER_VERSION = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER_VERSION=[^ ]+' | cut -d= -f2)
+NODE_EXPORTER_PORT = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER_PORT=[^ ]+' | cut -d= -f2)
 
 echo-vars:
 	@echo Platform:              $(PLATFORM)
@@ -32,8 +32,8 @@ save-images: pull-images
 	mkdir -p grafana/resources/images
 	docker save -o grafana/resources/images/grafana-$(GRAFANA_VERSION)-$(PLATFORM).tar grafana/grafana-oss:$(GRAFANA_VERSION)
 
-	mkdir -p node-exporter/resources/images
-	docker save -o node-exporter/resources/images/node-exporter-$(NODE_EXPORTER_VERSION)-$(PLATFORM).tar prom/node-exporter:$(NODE_EXPORTER_VERSION)
+	mkdir -p node_exporter/resources/images
+	docker save -o node_exporter/resources/images/node_exporter-$(NODE_EXPORTER_VERSION)-$(PLATFORM).tar prom/node-exporter:$(NODE_EXPORTER_VERSION)
 
 pull-resources: pull-configs pull-dashboards pull-rules
 
@@ -48,7 +48,7 @@ pull-dashboards:
 	mkdir -p grafana/resources/dashboards
 	wget https://grafana.com/api/dashboards/3662/revisions/2/download -O grafana/resources/dashboards/prometheus.json
 	wget https://grafana.com/api/dashboards/3590/revisions/3/download -O grafana/resources/dashboards/grafana.json
-	wget https://grafana.com/api/dashboards/1860/revisions/36/download -O grafana/resources/dashboards/node-exporter.json
+	wget https://grafana.com/api/dashboards/1860/revisions/36/download -O grafana/resources/dashboards/node_exporter.json
 
 pull-rules:
 	mkdir -p prometheus/resources/rules
