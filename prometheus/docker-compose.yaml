@@ -3,7 +3,7 @@ version: "3"
 services:
   prometheus:
     container_name: prometheus
-    image: prom/prometheus:${PROMETHEUS_VERSION}
+    image: prom/prometheus:${PROMETHEUS__VERSION}
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--web.enable-lifecycle"
@@ -11,5 +11,5 @@ services:
       - ./resources/configs/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./resources/rules:/etc/prometheus/rules
     ports:
-      - ${PROMETHEUS_PORT}:9090
+      - ${PROMETHEUS__PORT}:9090
     restart: unless-stopped

@@ -2,47 +2,47 @@
 
 PLATFORM = amd64
 
-PROMETHEUS_VERSION = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS_VERSION=[^ ]+' | cut -d= -f2)
-PROMETHEUS_PORT = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS_PORT=[^ ]+' | cut -d= -f2)
+PROMETHEUS__VERSION = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS__VERSION=[^ ]+' | cut -d= -f2)
+PROMETHEUS__PORT = $(shell cat prometheus/.env | grep -oE 'PROMETHEUS__PORT=[^ ]+' | cut -d= -f2)
 
-GRAFANA_VERSION = $(shell cat grafana/.env | grep -oE 'GRAFANA_VERSION=[^ ]+' | cut -d= -f2)
-GRAFANA_PORT = $(shell cat grafana/.env | grep -oE 'GRAFANA_PORT=[^ ]+' | cut -d= -f2)
+GRAFANA__VERSION = $(shell cat grafana/.env | grep -oE 'GRAFANA__VERSION=[^ ]+' | cut -d= -f2)
+GRAFANA__PORT = $(shell cat grafana/.env | grep -oE 'GRAFANA__PORT=[^ ]+' | cut -d= -f2)
 
-NODE_EXPORTER_VERSION = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER_VERSION=[^ ]+' | cut -d= -f2)
-NODE_EXPORTER_PORT = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER_PORT=[^ ]+' | cut -d= -f2)
+NODE_EXPORTER__VERSION = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER__VERSION=[^ ]+' | cut -d= -f2)
+NODE_EXPORTER__PORT = $(shell cat node_exporter/.env | grep -oE 'NODE_EXPORTER__PORT=[^ ]+' | cut -d= -f2)
 
 echo-vars:
 	@echo Platform:              $(PLATFORM)
-	@echo Prometheus version:    $(PROMETHEUS_VERSION)
-	@echo Prometheus port:       $(PROMETHEUS_PORT)
-	@echo Grafana version:       $(GRAFANA_VERSION)
-	@echo Grafana port:          $(GRAFANA_PORT)
-	@echo Node exporter version: $(NODE_EXPORTER_VERSION)
-	@echo Node exporter port:    $(NODE_EXPORTER_PORT)
+	@echo Prometheus version:    $(PROMETHEUS__VERSION)
+	@echo Prometheus port:       $(PROMETHEUS__PORT)
+	@echo Grafana version:       $(GRAFANA__VERSION)
+	@echo Grafana port:          $(GRAFANA__PORT)
+	@echo Node exporter version: $(NODE_EXPORTER__VERSION)
+	@echo Node exporter port:    $(NODE_EXPORTER__PORT)
 
 pull-images: echo-vars
-	docker pull --platform $(PLATFORM) prom/prometheus:$(PROMETHEUS_VERSION)
-	docker pull --platform $(PLATFORM) grafana/grafana-oss:$(GRAFANA_VERSION)
-	docker pull --platform $(PLATFORM) prom/node-exporter:$(NODE_EXPORTER_VERSION)
+	docker pull --platform $(PLATFORM) prom/prometheus:$(PROMETHEUS__VERSION)
+	docker pull --platform $(PLATFORM) grafana/grafana-oss:$(GRAFANA__VERSION)
+	docker pull --platform $(PLATFORM) prom/node-exporter:$(NODE_EXPORTER__VERSION)
 
 save-images: pull-images
 	mkdir -p prometheus/resources/images
-	docker save -o prometheus/resources/images/prometheus-$(PROMETHEUS_VERSION)-$(PLATFORM).tar prom/prometheus:$(PROMETHEUS_VERSION)
+	docker save -o prometheus/resources/images/prometheus-$(PROMETHEUS__VERSION)-$(PLATFORM).tar prom/prometheus:$(PROMETHEUS__VERSION)
 
 	mkdir -p grafana/resources/images
-	docker save -o grafana/resources/images/grafana-$(GRAFANA_VERSION)-$(PLATFORM).tar grafana/grafana-oss:$(GRAFANA_VERSION)
+	docker save -o grafana/resources/images/grafana-$(GRAFANA__VERSION)-$(PLATFORM).tar grafana/grafana-oss:$(GRAFANA__VERSION)
 
 	mkdir -p node_exporter/resources/images
-	docker save -o node_exporter/resources/images/node_exporter-$(NODE_EXPORTER_VERSION)-$(PLATFORM).tar prom/node-exporter:$(NODE_EXPORTER_VERSION)
+	docker save -o node_exporter/resources/images/node_exporter-$(NODE_EXPORTER__VERSION)-$(PLATFORM).tar prom/node-exporter:$(NODE_EXPORTER__VERSION)
 
 pull-resources: pull-configs pull-dashboards pull-rules
 
 pull-configs: echo-vars
 	mkdir -p prometheus/resources/configs
-	wget https://raw.githubusercontent.com/prometheus/prometheus/$(PROMETHEUS_VERSION)/documentation/examples/prometheus.yml -O prometheus/resources/configs/prometheus.yml
+	wget https://raw.githubusercontent.com/prometheus/prometheus/$(PROMETHEUS__VERSION)/documentation/examples/prometheus.yml -O prometheus/resources/configs/prometheus.yml
 
 	mkdir -p grafana/resources/configs
-	wget https://raw.githubusercontent.com/grafana/grafana/v$(GRAFANA_VERSION)/conf/sample.ini -O grafana/resources/configs/sample.ini
+	wget https://raw.githubusercontent.com/grafana/grafana/v$(GRAFANA__VERSION)/conf/sample.ini -O grafana/resources/configs/sample.ini
 
 pull-dashboards:
 	mkdir -p grafana/resources/dashboards

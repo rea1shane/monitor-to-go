@@ -3,10 +3,10 @@ version: "3"
 services:
   node_exporter:
     container_name: node_exporter
-    image: prom/node-exporter:${NODE_EXPORTER_VERSION}
+    image: prom/node-exporter:${NODE_EXPORTER__VERSION}
     command:
       - "--path.rootfs=/host"
-      - "--web.listen-address=:${NODE_EXPORTER_PORT}"
+      - "--web.listen-address=:${NODE_EXPORTER__PORT}"
     network_mode: host
     pid: host
     volumes:
